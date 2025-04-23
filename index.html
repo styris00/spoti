@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spoti ++</title>
+    <link rel="icon" href="spoti ++ 192px sans fond.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <button class="nav-btn active" data-section="import">
+            <i class="fas fa-download"></i>
+        </button>
+        <button class="nav-btn" data-section="list">
+            <i class="fas fa-music"></i>
+        </button>
+        <button class="nav-btn" data-section="playlists">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="nav-btn" data-section="save">
+            <i class="fas fa-sync"></i>
+        </button>
+    </nav>
+
+    <!-- Sections -->
+    <main>
+
+
+        <!-- IMPORTER DES MUSIQUES -->
+        <section id="import" class="section active">
+            <div class="haut-de-page">
+                <h1>Importer des titres</h1>
+            
+                <!-- Zone d'import en haut -->
+                <div class="import-zone">
+
+
+                    <div class="first-line-import-zone">
+                        <select id="playlist-select">
+                            <option value="">-- Sélectionner une playlist --</option>
+                            <!-- Options dynamiques insérées par JavaScript -->
+                        </select>
+                        <button id="import-musics">Importer</button>
+                    </div>
+
+                    <div class="filter-summary-musics-to-rate">
+                        <p><span id="music-count-musics-to-rate">0</span> titres, <span id="total-duration-musics-to-rate">0 min 0 s</span></p>
+                        <button id="create-spotify-playlist-musics-to-rate">Créer</button>
+                    </div>
+                        
+                </div>
+            </div>
+        
+            <!-- Liste des musiques -->
+            <div class="music-to-rate-list" id="music-to-rate-list">
+                <!-- Musiques dynamiquement insérées ici -->
+            </div>
+
+
+            <button id="spotify-login">Se connecter à Spotify</button>
+            <button id="show-database-content">Afficher le contenu de IndexedDB</button>
+
+        </section>
+
+
+        <!-- LISTE DES MUSIQUES -->
+        <section id="list" class="section">
+
+            <div class="haut-de-page" id="haut-de-page">
+                <h1>Liste des titres</h1>
+            
+                <!-- Zone de filtrage en haut -->
+                <div class="filter-zone">
+                
+                    <div class="filter-text">
+                        <div class="first-line">
+                            <input type="text" id="title-filter" placeholder="Titre">
+                            <select id="select-title-hearts">
+                                <option value="all" selected>✔</option>
+                                <option value="all-hearts">🤍🧡</option>
+                                <option value="only-super-heart">🧡</option>
+                                <option value="all-except-super-heart">✖🧡</option>
+                                <option value="only-simple-heart">🤍</option>
+                                <option value="only-without-heart">✖</option>
+                            </select>
+                        </div>
+                        <div class="second-line">
+                            <input type="text" id="album-filter" placeholder="Album">
+                            <select id="select-album-hearts">
+                                <option value="all" selected>✔</option>
+                                <option value="all-hearts">🤍🧡</option>
+                                <option value="only-super-heart">🧡</option>
+                                <option value="all-except-super-heart">✖🧡</option>
+                                <option value="only-simple-heart">🤍</option>
+                                <option value="only-without-heart">✖</option>
+                            </select>
+                        </div>
+                        <div class="third-line">
+                            <input type="text" id="author-filter" placeholder="Artiste">
+                            <select id="select-author-hearts">
+                                <option value="all" selected>✔</option>
+                                <option value="all-hearts">🤍🧡</option>
+                                <option value="only-super-heart">🧡</option>
+                                <option value="all-except-super-heart">✖🧡</option>
+                                <option value="only-simple-heart">🤍</option>
+                                <option value="only-without-heart">✖</option>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <div class="filter-tags">
+                        <div class="tags-energique">
+                            <div class="range-container">
+                                <select id="min-select-energique">
+                                    <option value="0" selected>0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                                <span>-</span>
+                                <select id="max-select-energique">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4" selected>4</option>
+                                </select>
+                            </div>
+                            <p>Energique</p>
+                        </div>
+
+                        <div class="tags-joyeuse">
+                            <div class="range-container">
+                                <select id="min-select-joyeuse">
+                                    <option value="0" selected>0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                                <span>-</span>
+                                <select id="max-select-joyeuse">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4" selected>4</option>
+                                </select>
+                            </div>
+                            <p>Joyeuse</p>
+                        </div>
+
+                        <div class="tags-musicale">
+                            <div class="range-container">
+                                <select id="min-select-musicale">
+                                    <option value="0" selected>0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                                <span>-</span>
+                                <select id="max-select-musicale">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4" selected>4</option>
+                                </select>
+                            </div>
+                            <p>Musicale</p>
+                        </div>
+
+                    </div>
+                
+                    <div class="filter-summary">
+                        <p><span id="music-count">0</span> titres, <span id="total-duration">0 min 0 s</span></p>
+                        <select id="sort-by-popularity">
+                            <option value="no"selected></option>
+                            <option value="décroissant">pop <</option>
+                            <option value="croissant">pop ></option>
+                        </select>
+                        <button id="create-app-playlist">Créer</button>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Liste des musiques -->
+            <div class="music-list" id="music-list">
+                <!-- Musiques dynamiquement insérées ici -->
+            </div>
+        </section>
+        
+
+        <!-- LISTE DES PLAYLISTES -->
+        <section id="playlists" class="section">
+            <div class="haut-de-page">
+                <h1>Liste des playlists</h1>
+            </div>
+            <!-- Liste des playlists -->
+            <div class="playlist-list" id="playlist-list">
+                <!-- Playlists dynamiquement insérées ici -->
+        </section>
+
+        <!-- DETAILS DES PLAYLISTES (section sans boutons) -->
+        <section id="playlist-details" class="section">
+
+            <div class="haut-de-page" id="haut-de-page-playlist">
+                <h1 id="titre-playlist">Détails playlist</h1>
+
+                <!-- Zone de détails en haut -->
+                <div class="filter-zone">
+                    
+                    <div class="filter-text">
+                        <div class="first-line">
+                            <input type="text" id="playlist-title-filter" placeholder="Titre">
+                            <select id="playlist-select-title-hearts">
+                                <option value="all" selected>✔</option>
+                                <option value="all-hearts">🤍🧡</option>
+                                <option value="only-super-heart">🧡</option>
+                                <option value="all-except-super-heart">✖🧡</option>
+                                <option value="only-simple-heart">🤍</option>
+                                <option value="only-without-heart">✖</option>
+                            </select>
+                        </div>
+                        <div class="second-line">
+                            <input type="text" id="playlist-album-filter" placeholder="Album">
+                            <select id="playlist-select-album-hearts">
+                                <option value="all" selected>✔</option>
+                                <option value="all-hearts">🤍🧡</option>
+                                <option value="only-super-heart">🧡</option>
+                                <option value="all-except-super-heart">✖🧡</option>
+                                <option value="only-simple-heart">🤍</option>
+                                <option value="only-without-heart">✖</option>
+                            </select>
+                        </div>
+                        <div class="third-line">
+                            <input type="text" id="playlist-author-filter" placeholder="Artiste">
+                            <select id="playlist-select-author-hearts">
+                                <option value="all" selected>✔</option>
+                                <option value="all-hearts">🤍🧡</option>
+                                <option value="only-super-heart">🧡</option>
+                                <option value="all-except-super-heart">✖🧡</option>
+                                <option value="only-simple-heart">🤍</option>
+                                <option value="only-without-heart">✖</option>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <div class="filter-tags">
+                        <div class="tags-energique">
+                            <div class="range-container">
+                                <select id="playlist-min-select-energique">
+                                    <option value="0" selected>0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                                <span>-</span>
+                                <select id="playlist-max-select-energique">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4" selected>4</option>
+                                </select>
+                            </div>
+                            <p>Energique</p>
+                        </div>
+
+                        <div class="tags-joyeuse">
+                            <div class="range-container">
+                                <select id="playlist-min-select-joyeuse">
+                                    <option value="0" selected>0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                                <span>-</span>
+                                <select id="playlist-max-select-joyeuse">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4" selected>4</option>
+                                </select>
+                            </div>
+                            <p>Joyeuse</p>
+                        </div>
+
+                        <div class="tags-musicale">
+                            <div class="range-container">
+                                <select id="playlist-min-select-musicale">
+                                    <option value="0" selected>0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                                <span>-</span>
+                                <select id="playlist-max-select-musicale">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4" selected>4</option>
+                                </select>
+                            </div>
+                            <p>Musicale</p>
+                        </div>
+
+                    </div>
+                
+                    <div class="filter-summary">
+                        <p><span id="playlist-music-count">0</span> titres, <span id="playlist-total-duration">0 min 0 s</span></p>
+                        <select id="playlist-sort-by-popularity">
+                            <option value="no"selected></option>
+                            <option value="décroissant">pop <</option>
+                            <option value="croissant">pop ></option>
+                        </select>
+                        <button id="playlist-action">Actions</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des musiques -->
+            <div class="music-list" id="music-of-playlist-list">
+                <!-- Musiques dynamiquement insérées ici -->
+            </div>
+                    
+        </section>
+
+
+        <!-- SAUVEGARDE / SYNCHRONISATION -->
+        <section id="save" class="section">
+            <h1>Sauvegarde et synchronisation</h1>
+            <button id="save-db-btn">Sauvegarder la base de données</button>
+            <input type="file" id="restore-db-input" style="display: none;" />
+            <button id="restore-db-btn">Restaurer la base de données</button>
+        </section>
+    </main>
+
+    <script src="app2.js"></script>
+    <script>
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", () => {
+            navigator.serviceWorker.register("/sw.js")
+              .then((registration) => {
+                console.log("Service Worker enregistré avec succès :", registration.scope);
+              })
+              .catch((error) => {
+                console.error("Échec de l’enregistrement du Service Worker :", error);
+              });
+          });
+        }
+      </script>
+</body>
+</html>

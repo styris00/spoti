@@ -1,0 +1,1093 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #000000;
+    color: white;
+    padding-bottom: 50px; /* pour ne pas cacher de musiques sous la barre ne navigation en empêchant de scroller plus bas */
+}
+
+main {
+    padding: 10px;
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+.section h1 {
+    text-align: center;
+    padding: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    /* Ci-dessous utile pour les textes h1 dépassaut 1 ligne entière */
+    white-space: nowrap;         /* Empêche le retour à la ligne */
+    overflow: hidden;            /* Coupe le texte qui dépasse */
+    text-overflow: ellipsis;     /* Affiche "..." quand le texte dépasse */
+    width: 100%;                 /* Ajuste la largeur selon ton besoin */
+}
+
+
+.haut-de-page {
+    background-color: #000000;
+    position: fixed; /* La barre reste fixe en haut de la page */
+    top: 0;          /* Positionnée tout en haut */
+    left: 50%;       /* Position horizontale au centre de la fenêtre */
+    transform: translate(-50%, 0); /* Centre la barre horizontalement */
+    width: 100%;      /* Largeur définie pour la barre */
+    z-index: 500;   /* S'assure qu'elle est au-dessus des autres éléments */
+}
+
+/* Masquer le menu en le faisant sortir par le haut */
+.haut-de-page.menu-cache {
+    transform: translate(-50%, -83%); /* Cache le menu */
+    transition: all 0.3s ease;
+}
+
+/* Menu visible */
+.haut-de-page.menu-visible {
+    transform: translate(-50%, 0); /* Réinitialise la position */
+    transition: all 0.3s ease;
+}
+
+
+/* Navigation Bar */
+.navbar {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    z-index: 500;
+    display: flex;
+    justify-content: space-around;
+    background-color: #000000;
+    padding: 10px 0;
+}
+
+.nav-btn {
+    color: #fff;
+    font-size: 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, font-weight 0.3s ease, color 0.3s ease;
+    padding-bottom: 8px;
+    padding-top: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 50%;/* Pour l'effet de surbrillance */
+}
+
+.nav-btn:hover {
+    transform: scale(1.1); /* Légère augmentation de taille au survol */
+    /*color: #FF6347; /* Rouge tomate au survol */
+}
+
+.nav-btn.active {
+    background-color: rgba(255, 255, 255, 0.2); /* Fond semi-transparent pour l'élément actif */
+    /*color: #FFD700; /* Couleur dorée pour le bouton actif */
+}
+
+.nav-btn.active {
+    outline: none; /* Supprime le contour de focus */
+}
+
+
+/* Zone d'import (PAGE IMPORTER DES TITRES)*/
+
+.import-zone {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0px;
+    background-color: #121212;
+    padding: 5px;
+    border-radius: 12px;
+}
+
+.first-line-import-zone {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    background-color: #121212;
+    padding: 5px;
+    border-radius: 12px;
+    gap: 5px;
+}
+
+.import-zone select {
+    background-color: #1f1f1f;
+    border: 1px solid #444;
+    color: #ffffff;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    padding: 5px;
+    flex: 1;
+}
+
+.import-zone select:focus {
+    border-color: #ffffff;
+    outline: none;
+}
+
+.import-zone #import-musics {
+    font-size: 14px;
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    color: #ffffff;
+    border-radius: 17px;
+    padding: 5px;
+    padding-left: 12px;
+    padding-right: 12px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    margin-left: auto; /* Garde cet éléments collé à droite */
+}
+
+.import-zone #import-musics:hover {
+    transition: border-color 0.5s;
+    background-color: #2b2b2b;
+}
+
+.filter-summary-musics-to-rate {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    align-items: center;
+    flex: 0 0 0px;
+    margin: 20px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.filter-summary-musics-to-rate p {
+    font-size: 13px;
+    color: #c2c1c1;
+}
+
+.filter-summary-musics-to-rate button {
+    font-size: 14px;
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    color: #ffffff;
+    border-radius: 17px;
+    padding: 5px;
+    padding-left: 12px;
+    padding-right: 12px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    margin-left: auto; /* Garde cet éléments collé à droite */
+}
+
+.filter-summary-musics-to-rate button:hover {
+    transition: border-color 0.5s;
+    background-color: #2b2b2b;
+}
+
+/* Liste des musiques (PAGE IMPORTER, une partie est dans la page LISTE DES TITRES) */
+.music-to-rate-list {
+    flex: 1; /* Prend tout l'espace restant entre la barre et le menu */
+    margin-top: 112px; /* Compense la hauteur de la barre de recherche */
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+
+}
+
+.music-box-musics-to-rate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between; /* Distribution initiale */
+    border: 0px solid #ccc;
+    border-radius: 8px;
+    padding: 3px;
+    width: 100%;
+    background-color: #121212;
+}
+
+.up-part-list-to-rate {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; /* Distribution initiale */
+    border: 0px solid #ccc;
+    border-radius: 8px;
+    padding: 3px;
+    padding-left: 0px;
+    margin-bottom: 3px;
+    width: 100%;
+}
+
+.bottom-part-list-to-rate {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border: 0px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.bottom-part-list-to-rate-div {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    align-items: center;
+}
+
+.bottom-part-list-to-rate-div p {
+    font-size: 10px;
+    color: #a3a3a3
+}
+
+.bottom-part-list-to-rate select {
+    font-size: 12px;
+    background-color: #121212; /*#1f1f1f;*/
+    border: 1px solid #333;
+    color: #ffffff;
+    border-radius: 6px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.bottom-part-list-to-rate select:focus {
+    border-color: #ffffff;
+    outline: none;
+}
+
+.bottom-part-list-to-rate button {
+    font-size: 14px;
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    color: #ffffff;
+    border-radius: 17px;
+    padding-left: 9px;
+    padding-right: 9px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.bottom-part-list-to-rate button:hover {
+    transition: border-color 0.5s;
+    background-color: #2b2b2b;
+}
+
+
+
+/* Fenêtre modale pour les musiques : page IMPORTER et page LISTE DES TITRES*/
+/* Styles de la fenêtre modale */
+/*.modal-grande {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding-top: 100px;
+    text-align: center;
+}*/ /* Deja défini plus bas (modal création playlist) */
+/* Contenu de la modale */
+.modal-content-info-musiques {
+    background-color: #121212;
+    margin: auto;
+    padding: 20px;
+    width: 85%;
+    max-width: 500px;
+    border-radius: 10px;
+}
+.modal-content-info-musiques .modal-author-info,
+.modal-content-info-musiques .modal-album-details,
+.modal-content-info-musiques .modal-album-actions,
+.modal-content-info-musiques .modal-musique-title,
+.modal-content-info-musiques .modal-musique-infos,
+.modal-content-info-musiques .modal-musique-tags,
+.modal-content-info-musiques .modal-music-tags {
+    padding: 0px;
+    display: flex;
+    flex-direction: row; /* par défaut c'est row mais je le met quand même */
+    gap: 0px;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+.modal-content-info-musiques .modal-album-info {
+    padding: 0px;
+    display: flex;
+    flex-direction: row; /* par défaut c'est row mais je le met quand même */
+    gap: 0px;
+    align-items: center;
+}
+.modal-content-info-musiques .modal-album-right-part {
+    flex: 1;
+}
+.modal-content-info-musiques h3 {
+    padding: 5px;
+}
+.modal-content-info-musiques select {
+    background-color: #121212; /*#1f1f1f;*/
+    border: 1px solid #444;
+    color: #ffffff;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    padding: 4px;
+    margin: 2px;
+    margin-left: auto; /* Garde cet éléments collé à droite */
+}
+.modal-content-info-musiques button {
+    font-size: 12px;
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    color: #ffffff;
+    border-radius: 20px;
+    padding: 5px;
+    padding-left: 7px;
+    padding-right: 7px;
+    margin: 2px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    margin-left: auto; /* Garde cet éléments collé à droite */
+}
+.modal-content-info-musiques button.end-line {
+    font-size: 15px;
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    color: #ffffff;
+    border-radius: 20px;
+    padding: 7px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin: 15px;
+    margin-top: 25px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+.modal-content-info-musiques button:hover {
+    transition: border-color 0.5s;
+    background-color: #2b2b2b;
+}
+.modal-content-info-musiques p {
+    margin: 6px;
+    font-size: 11px;
+    color: #c2c1c1;
+}
+.modal-content-info-musiques p.artist-name {
+    font-size: 17px;
+    color: #ffffff;
+}
+.modal-content-info-musiques p.album-name {
+    font-size: 17px;
+    color: #ffffff;
+}
+.modal-content-info-musiques p.music-name {
+    font-size: 17px;
+    color: #ffffff;
+}
+.modal-content-info-musiques p.tag-name {
+    font-size: 11px;
+    margin: 4px;
+}
+/*.modal-content-info-musiques p.status-album-complete {
+    color: #5ca057;
+}
+.modal-content-info-musiques p.status-album-incomplete {
+    color: #a05757;
+}*/
+.modal-content-info-musiques hr {
+    color: #c2c1c1;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.modal-content-info-musiques img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    margin-right: 16px; /* Pousse tout ce qui vient après vers la droite */
+}
+
+
+
+
+
+/* Zone de filtrage (PAGE LISTE DES TITRES)*/
+.filter-zone {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap; /* wrap;*/
+    gap: 0px;
+    background-color: #121212;
+    padding: 5px;
+    padding-bottom: 2px;
+    border-radius: 12px;
+    margin-bottom: 0px;
+}
+
+.filter-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-text input{
+    padding: 5px;
+    padding-left: 12px;
+    font-size: 14px;
+    border: 1px solid #1f1f1f;
+    border-radius: 13px;
+    transition: border-color 0.5s;
+    margin-bottom: 5px;
+    background-color: #1f1f1f;
+    color: white;
+    flex: 1;
+}
+
+.filter-text input::placeholder {
+    color: #a3a3a3; /* Couleur du placeholder (par exemple, un gris clair) */
+}
+
+.filter-text input:hover {
+    outline: none; /* Supprimer l'effet de bordure par défaut du navigateur */
+    border: 1px solid #a3a3a3; /* Bordure blanche de 1px */
+    transition: border-color 0.5s;
+    background-color: #2b2b2b; /* Changer la couleur de fond (par exemple un gris clair) */
+}
+
+.filter-text input:focus {
+    outline: none; /* Supprimer l'effet de bordure par défaut du navigateur */
+    border: 1px solid #fff; /* Bordure blanche de 1px */
+    transition: border-color 0.5s;
+    background-color: #1f1f1f; /* Changer la couleur de fond (par exemple un gris clair) */
+}
+
+.first-line, .second-line, .third-line {
+    display: flex;
+    flex-direction: row; /* par défaut c'est row mais je le met quand même */
+    gap: 5px;
+}
+
+.first-line select, .second-line select, .third-line select {
+    background-color: #1f1f1f;
+    border: 1px solid #444;
+    color: #ffffff;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    padding: 5px;
+    margin-bottom: 5px;
+    margin-left: auto; /* Garde cet éléments collé à droite */
+}
+
+.first-line select:focus, .second-line select:focus, .third-line select:focus {
+    border-color: #ffffff;
+    outline: none;
+}
+
+.filter-tags{
+    padding: 0px;
+    display: flex;
+    flex-direction: row; /* par défaut c'est row mais je le met quand même */
+    gap: 0px;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+.tags-energique, .tags-joyeuse, .tags-musicale {
+    background-color: #1f1f1f;
+    border-radius: 13px;
+    padding: 4px;
+    padding-top: 0px;
+    border: 1px solid #333;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.range-container span {
+    font-size: 18px;
+    margin: 0 3px;
+    color: #ffffff;
+}
+
+.tags-energique:hover, .tags-joyeuse:hover, .tags-musicale:hover {
+    transition: border-color 0.5s;
+    background-color: #2b2b2b;
+}
+
+.range-container select {
+    background-color: #333;
+    border: 1px solid #444;
+    color: #ffffff;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.range-container select:focus {
+    border-color: #ffffff;
+    outline: none;
+}
+
+.tags-energique p, .tags-joyeuse p, .tags-musicale p {
+    font-size: 12px;
+}
+
+
+.filter-summary {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    align-items: center;
+    flex: 0 0 0px;
+    margin: 5px;
+    margin-left: 15px;
+    margin-right: 15px;
+    gap: 5px;
+}
+
+.filter-summary p {
+    font-size: 13px;
+    color: #c2c1c1;
+    flex: 1;
+    text-align: left;
+}
+
+.filter-summary #create-app-playlist {
+    font-size: 14px;
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    color: #ffffff;
+    border-radius: 17px;
+    padding: 5px;
+    padding-left: 12px;
+    padding-right: 12px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    margin-left: auto; /* Garde cet éléments collé à droite */
+}
+
+.filter-summary #create-app-playlist:hover {
+    transition: border-color 0.5s;
+    background-color: #2b2b2b;
+}
+
+.filter-summary #sort-by-popularity {
+    font-size: 14px;
+    background-color: #121212;
+    border: 1px solid #444;
+    color: #ffffff;
+    border-radius: 17px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    padding: 5px;
+    margin-left: auto; /* Garde cet éléments collé à droite */
+}
+
+.filter-summary #sort-by-popularity:focus {
+    border-color: #ffffff;
+    outline: none;
+}
+
+
+
+/* Fenêtre modale pour la création d'une playlist de l'application PAGE LISTE DES TITRES*/
+/* Styles de la fenêtre modale */
+.modal {
+    display: none; /* Masquer la fenêtre par défaut */
+    position: fixed;
+    z-index: 1000; /* Pour la faire apparaître au-dessus du contenu */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    padding-top: 100px;
+    text-align: center;
+}
+/* Contenu de la modale */
+.modal-content-create-playlist {
+    background-color: #121212;
+    margin: auto;
+    padding: 15px;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+}
+.modal-content-create-playlist input{
+    padding: 5px;
+    padding-left: 12px;
+    font-size: 14px;
+    border: 1px solid #1f1f1f;
+    border-radius: 13px;
+    transition: border-color 0.5s;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #1f1f1f;
+    color: white;
+    width: 100%;
+}
+.modal-content-create-playlist input::placeholder {
+    color: #a3a3a3; /* Couleur du placeholder (par exemple, un gris clair) */
+}
+.modal-content-create-playlist input:hover {
+    outline: none; /* Supprimer l'effet de bordure par défaut du navigateur */
+    border: 1px solid #a3a3a3; /* Bordure blanche de 1px */
+    transition: border-color 0.5s;
+    background-color: #2b2b2b; /* Changer la couleur de fond (par exemple un gris clair) */
+}
+.modal-content-create-playlist input:focus {
+    outline: none; /* Supprimer l'effet de bordure par défaut du navigateur */
+    border: 1px solid #fff; /* Bordure blanche de 1px */
+    transition: border-color 0.5s;
+    background-color: #1f1f1f; /* Changer la couleur de fond (par exemple un gris clair) */
+}
+.modal-content-create-playlist button {
+    font-size: 15px;
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    color: #ffffff;
+    border-radius: 20px;
+    padding: 7px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin: 2px;
+    margin-left: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+.modal-content-create-playlist button:hover {
+    transition: border-color 0.5s;
+    background-color: #2b2b2b;
+}
+.modal-content-create-playlist p {
+    margin: 6px;
+    font-size: 15px;
+    color: #c2c1c1;
+}
+
+
+/* Liste des musiques (PAGE LISTE DES TITRES & partie PAGE IMPORTER */
+.music-list {
+    flex: 1; /* Prend tout l'espace restant entre la barre et le menu */
+    margin-top: 230px; /* Compense la hauteur de la barre de recherche */
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+
+}
+
+.music-list.menu-cache { /* Lorsque la zone de filtrage est masquée */
+    margin-top: 35px; /* Compense la hauteur de la barre de recherche */
+
+}
+
+.music-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; /* Distribution initiale */
+    border: 0px solid #ccc;
+    border-radius: 8px;
+    padding: 3px;
+    width: 100%;
+    background-color: #121212;
+}
+
+.music-box img, .music-box-musics-to-rate img {
+    width: 45px;
+    height: 45px;
+    border-radius: 8px;
+    margin-right: 16px; /* Pousse tout ce qui vient après vers la droite */
+}
+
+.music-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1; /* Prend tout l'espace disponible entre A et C */
+    white-space: nowrap;        /* Empêche le retour à la ligne */
+    overflow: hidden;           /* Cache le texte qui dépasse les limites */
+    text-overflow: ellipsis;    /* Ajoute les points de suspension (...) */
+    display: block;             /* Assure que le conteneur est un bloc */
+    width: 100%;                /* Utilise toute la largeur disponible dynamiquement */
+    max-width: 100%;            /* Optionnel, pour éviter que la div déborde */
+    box-sizing: border-box;     /* Assure que les marges et les bordures sont prises en compte */
+}
+
+.music-box .music-info .music-titre, .music-box-musics-to-rate .music-info .music-titre {
+    margin: 0;
+    font-size: 14px;
+    color: #ffffff;
+    white-space: nowrap;        /* Empêche le retour à la ligne */
+    overflow: hidden;           /* Cache le texte qui dépasse les limites */
+    text-overflow: ellipsis;    /* Ajoute les points de suspension (...) */
+    display: block;             /* Assure que le conteneur est un bloc */
+    width: 100%;                /* Utilise toute la largeur disponible dynamiquement */
+    max-width: 100%;            /* Optionnel, pour éviter que la div déborde */
+    box-sizing: border-box;     /* Assure que les marges et les bordures sont prises en compte */
+    margin-bottom: 3px;
+}
+
+.music-box .music-info .music-auteur, .music-box-musics-to-rate .music-info .music-auteur {
+    margin: 0;
+    font-size: 12px;
+    color: #a3a3a3;
+    white-space: nowrap;        /* Empêche le retour à la ligne */
+    overflow: hidden;           /* Cache le texte qui dépasse les limites */
+    text-overflow: ellipsis;    /* Ajoute les points de suspension (...) */
+    display: block;             /* Assure que le conteneur est un bloc */
+    width: 100%;                /* Utilise toute la largeur disponible dynamiquement */
+    max-width: 100%;            /* Optionnel, pour éviter que la div déborde */
+    box-sizing: border-box;     /* Assure que les marges et les bordures sont prises en compte */
+}
+
+p.music-duration {
+    font-size: 13px;
+    color: #a3a3a3;
+    margin-left: 14px; /* Garde ces éléments collés ensemble à droite */
+}
+
+.action-btn {
+    font-size: 17px;
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    color: #ffffff;
+    border-radius: 17px;
+    padding-top: 2px;
+    padding-left: 9px;
+    padding-right: 9px;
+    margin-left: 8px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.action-btn:hover {
+    transition: border-color 0.5s;
+    background-color: #2b2b2b;
+}
+
+
+
+
+
+/* Menu d'actions (fenêtre pop-up) */
+/*.action-menu {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 400px;
+    z-index: 1000;
+}
+
+.action-menu.active {
+    display: block;
+}
+
+.action-menu img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.action-menu h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.action-menu p {
+    font-size: 14px;
+    color: #666;
+    margin: 10px 0;
+}
+
+.action-menu input {
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.action-menu button {
+    background-color: #1DB954;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.action-menu button:hover {
+    background-color: #1a9e43;
+}
+
+.action-menu #close-menu {
+    background-color: #ccc;
+    color: #333;
+}
+
+.action-menu #close-menu:hover {
+    background-color: #bbb;
+} */
+
+
+
+/* Zone de détails PAGE DETAILS PLAYLIST -> PAGE DETAILS PLAILIST */
+
+.filter-summary #playlist-action {
+    font-size: 14px;
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    color: #ffffff;
+    border-radius: 17px;
+    padding: 5px;
+    padding-left: 12px;
+    padding-right: 12px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    margin-left: auto; /* Garde cet éléments collé à droite */
+}
+
+.filter-summary #playlist-action:hover {
+    transition: border-color 0.5s;
+    background-color: #2b2b2b;
+}
+
+.filter-summary #playlist-sort-by-popularity {
+    font-size: 14px;
+    background-color: #121212;
+    border: 1px solid #444;
+    color: #ffffff;
+    border-radius: 17px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    padding: 5px;
+    margin-left: auto; /* Garde cet éléments collé à droite */
+}
+
+.filter-summary #playlist-sort-by-popularity:focus {
+    border-color: #ffffff;
+    outline: none;
+}
+
+
+
+
+
+/* Liste de playlists PAGE PLAYLISTS*/
+
+.playlist-list {
+    flex: 1; /* Prend tout l'espace restant entre la barre et le menu */
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 30px; /* Compense la hauteur de la barre de recherche */
+}
+
+.playlist-list.menu-cache { /* Lorsque la zone de filtrage est masquée */
+    margin-top: 35px; /* Compense la hauteur de la barre de recherche */
+}
+
+.playlist-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; /* Distribution initiale */
+    border: 0px solid #ccc;
+    border-radius: 8px;
+    padding: 5px;
+    width: 100%;
+    background-color: #121212;
+    gap: 10px;
+}
+
+.playlist-box .playlist-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1; /* Prend tout l'espace disponible entre A et C */
+    white-space: nowrap;        /* Empêche le retour à la ligne */
+    overflow: hidden;           /* Cache le texte qui dépasse les limites */
+    text-overflow: ellipsis;    /* Ajoute les points de suspension (...) */
+    display: block;             /* Assure que le conteneur est un bloc */
+    width: 100%;                /* Utilise toute la largeur disponible dynamiquement */
+    max-width: 100%;            /* Optionnel, pour éviter que la div déborde */
+    box-sizing: border-box;     /* Assure que les marges et les bordures sont prises en compte */
+}
+
+.playlist-box .playlist-titre {
+    margin: 0;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #ffffff;
+    white-space: nowrap;        /* Empêche le retour à la ligne */
+    overflow: hidden;           /* Cache le texte qui dépasse les limites */
+    text-overflow: ellipsis;    /* Ajoute les points de suspension (...) */
+    display: block;             /* Assure que le conteneur est un bloc */
+    width: 100%;                /* Utilise toute la largeur disponible dynamiquement */
+    max-width: 100%;            /* Optionnel, pour éviter que la div déborde */
+    box-sizing: border-box;     /* Assure que les marges et les bordures sont prises en compte */
+    margin-bottom: 3px;
+}
+
+.playlist-box .criteria {
+    margin: 0;
+    font-size: 12px;
+    color: #a3a3a3;
+    white-space: nowrap;        /* Empêche le retour à la ligne */
+    overflow: hidden;           /* Cache le texte qui dépasse les limites */
+    text-overflow: ellipsis;    /* Ajoute les points de suspension (...) */
+    display: block;             /* Assure que le conteneur est un bloc */
+    width: 100%;                /* Utilise toute la largeur disponible dynamiquement */
+    max-width: 100%;            /* Optionnel, pour éviter que la div déborde */
+    box-sizing: border-box;     /* Assure que les marges et les bordures sont prises en compte */
+}
+
+.playlist-box .playlist-tags {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-grow: 1; /* Prend tout l'espace disponible entre A et C */
+    margin-bottom: 3px;
+}
+
+.playlist-box .action-btn-playlist {
+    font-size: 17px;
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    color: #ffffff;
+    border-radius: 17px;
+    padding-top: 2px;
+    padding-left: 9px;
+    padding-right: 9px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.playlist-box .action-btn-playlist:hover {
+    transition: border-color 0.5s;
+    background-color: #2b2b2b;
+}
+
+.playlist-box .playlist-tags p {
+    margin: 0;
+    font-size: 13px;
+    color: #a3a3a3;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Styles pour le téléphone */
+@media screen and (max-width: 600px) {
+    .navbar {
+        padding: 10px 0;
+    }
+
+    .filter-zone {
+        flex-direction: column;
+    }
+
+    .filter-left, .filter-right {
+        width: 100%;
+    }
+
+    /*.filter-summary {
+        text-align: center;
+        margin-top: 0px;
+    }*/
+
+    .music-item {
+        flex-direction: row;
+        padding: 10px;
+    }
+
+    .music-item img {
+        width: 50px;
+        height: 50px;
+        margin-right: 15px;
+    }
+
+    .music-item .music-info {
+        flex-grow: 1;
+        padding-right: 10px;
+    }
+
+    .music-item .music-scores {
+        flex-shrink: 0;
+    }
+}
+
+
+
+/* Media query pour les écrans plus larges (ordinateurs) */
+@media screen and (min-width: 800px) and (max-width: 1100px) { /* Si la largeur de l'écran est supérieure ou égale à 768px */
+    main {
+        padding: 10px 0; /* Padding de 10px en haut et en bas */
+        width: 70%; /* Le contenu prend 60% de la largeur de l'écran */
+        margin: 0 auto; /* Centrer le contenu horizontalement */
+    }
+
+    .haut-de-page {
+        width: 75%;
+    }
+}
+
+@media screen and (min-width: 1100px){ /* Si la largeur de l'écran est supérieure ou égale à 768px */
+    main {
+        padding: 10px 0; /* Padding de 10px en haut et en bas */
+        width: 60%; /* Le contenu prend 60% de la largeur de l'écran */
+        margin: 0 auto; /* Centrer le contenu horizontalement */
+    }
+
+    .haut-de-page {
+        width: 65%;
+    }
+}
