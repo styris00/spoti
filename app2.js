@@ -1074,7 +1074,7 @@ let accessToken;
 
 // Loging into Spotify
 const clientId = '90fc7089b14747f58ec11b9607ee63ac'; // Remplacez par votre Client ID
-const redirectUri = 'http://styris00.github.io/spoti/';
+const redirectUri = 'https://styris00.github.io/spoti/';
 const scopes = [
     'playlist-read-private',
     'playlist-read-collaborative',
