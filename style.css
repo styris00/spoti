@@ -499,6 +499,7 @@ main {
     padding-right: 12px;
     cursor: pointer;
     transition: border-color 0.3s ease;
+    margin-bottom: 5px;
     margin-left: auto; /* Garde cet éléments collé à droite */
 }
 

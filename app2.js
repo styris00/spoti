@@ -34,6 +34,7 @@ document.querySelectorAll('.nav-btn').forEach(button => {
 function emptyInput(imputId){
     var input = document.getElementById(imputId);
     input.value = "";
+    displayMusics();
 }
 
 const btn1 = document.getElementById("empty-input-1");
