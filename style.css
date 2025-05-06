@@ -495,8 +495,8 @@ main {
     color: #ffffff;
     border-radius: 17px;
     padding: 0px;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
     cursor: pointer;
     transition: border-color 0.3s ease;
     margin-bottom: 5px;
