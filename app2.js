@@ -29,6 +29,25 @@ document.querySelectorAll('.nav-btn').forEach(button => {
 
 
 
+// Ci dessous les fonctions de fonctionnalité des boutons "X" pour vider les champs de texte (je sais pas où le mettre d'autre)
+
+function emptyInput(imputId){
+    var input = document.getElementById(imputId);
+    input.value = "";
+}
+
+const btn1 = document.getElementById("empty-input-1");
+btn1.onclick = () => emptyInput("title-filter");
+
+const btn2 = document.getElementById("empty-input-2");
+btn2.onclick = () => emptyInput("album-filter");
+
+const btn3 = document.getElementById("empty-input-3");
+btn3.onclick = () => emptyInput("author-filter");
+
+
+
+
 // ==============================================
 // Gestion de IndexedDB
 // ==============================================
