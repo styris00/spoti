@@ -1091,22 +1091,18 @@ const scopes = [
 // Fonction à lancer au démarrage de l'application (n'a aucun effet, sauf si on arrive depuis la connexion Spotify (après s'être connecté) -> Dasn ce cas, cela stocke les tockens proprement)
 // Si le access_token, le refresh_token et expires_in sont présents dans l'URL (ce qui arrive après une connexion réussie), on les stocke dans localStorage pour les réutiliser plus tard.
 function parseTokenFromUrl() {
-    console.log('parseTokenFromUrl APPELLEEEEEEEEEEEEE');
-    const hash = window.location.hash.substring(1); // récupère le hash de l'URL après #
-    const params = new URLSearchParams(hash);       // le transforme en objet manipulable
-
-    const token = params.get('access_token');       // extrait le token
-    const refreshToken = params.get('refresh_token'); // extrait le refresh token
-    const expiresIn = parseInt(params.get('expires_in'), 10); // extrait la durée de validité
-
-    if (token && refreshToken && expiresIn) {
-        const expirationTime = Date.now() + expiresIn * 1000; // calcule la date d'expiration
-
-        localStorage.setItem('spotify_access_token', token); // stocke le token
-        localStorage.setItem('spotify_refresh_token', refreshToken); // stocke le refresh token
-        localStorage.setItem('spotify_token_expires_at', expirationTime); // stocke l'expiration
-
-        window.location.hash = ''; // nettoie l'URL (bonne UX, évite que le token reste visible)
+    console.log("APPEL DE 'parseTokenFromUrl'")
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+  
+    const token = params.get('access_token');
+    const expiresIn = params.get('expires_in');
+  
+    if (token && expiresIn) {
+      const expirationTime = Date.now() + parseInt(expiresIn, 10) * 1000;
+      localStorage.setItem('spotify_access_token', token);
+      localStorage.setItem('spotify_token_expires_at', expirationTime);
+      window.history.replaceState({}, document.title, "/"); // nettoie l'URL
     }
 }
 
@@ -1114,61 +1110,28 @@ function parseTokenFromUrl() {
 // Fonction appellée avant chaque utilisation de l'API Spotify pour garantir d'avoir un tocken correct
 // Si le access_token est expiré ou manquant, cette fonction essaie de récupérer un nouveau token via le refresh_token. Si le refresh_token est également absent, elle lance le processus d’authentification normal.
 function getValidAccessToken() {
-    console.log('getValidAccessToken APPELLEEEEEEEEEEEEE');
-    const token = localStorage.getItem('spotify_access_token'); // récupère le token stocké
-    const refreshToken = localStorage.getItem('spotify_refresh_token'); // récupère le refresh token
-    const expiresAt = parseInt(localStorage.getItem('spotify_token_expires_at'), 10); // l’expiration
-
-    if (!token || Date.now() > expiresAt - 300000) { // si le token est absent ou expire bientôt (dans 5min)
-        console.log("NOUVEAU TOCKEN NECESSAIRE (getValidAccessToken())")
-        if (refreshToken) {
-            // Si le refresh token existe, on l'utilise pour obtenir un nouveau access token
-            return refreshAccessToken(refreshToken);
-        }
-        redirectToSpotifyAuth(); // relance le flow d'auth si on n'a ni token valide, ni refresh token
-        return null;
+    console.log("APPEL DE 'getValidAccessToken'")
+    const token = localStorage.getItem('spotify_access_token');
+    const expiresAt = parseInt(localStorage.getItem('spotify_token_expires_at'), 10);
+  
+    if (!token || Date.now() > expiresAt - 300000) {
+      // Token manquant ou expiré → rediriger vers l'auth Spotify
+      console.log("tocken manquant 'getValidAccessToken'")
+      redirectToSpotifyAuth();
+      return null;
     }
+  
+    return token;
+  }
+  
 
-    return token; // sinon, le token est encore bon
-}
-
-
-// Utilisée par "getValidAccessToken()" dans le cas où un simple "rafraichissement de token est possible"
-// La fonction refreshAccessToken() envoie une requête à l'API Spotify avec le refresh_token pour obtenir un nouveau access_token. Si la réponse est positive, elle stocke le nouveau token dans localStorage.
-function refreshAccessToken(refreshToken) {
-
-    const url = `https://accounts.spotify.com/api/token`;
-    const params = new URLSearchParams();
-    params.append('grant_type', 'refresh_token');
-    params.append('refresh_token', refreshToken);
-    params.append('client_id', clientId);
-    params.append('redirect_uri', redirectUri);
-
-    fetch(url, {
-        method: 'POST',
-        body: params,
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.access_token) {
-                const expirationTime = Date.now() + data.expires_in * 1000;
-                localStorage.setItem('spotify_access_token', data.access_token);
-                localStorage.setItem('spotify_token_expires_at', expirationTime);
-                console.log('Nouveau token récupéré :', data.access_token);
-            }
-        })
-        .catch(error => console.error('Erreur lors du rafraîchissement du token :', error));
-}
 
 // Utilisée par "getValidAccessToken()" dans le cas où il faut refaire une authentification complète
 // Cette fonction génère l’URL d’authentification pour obtenir un nouveau access_token lorsque nécessaire. Cela se produit lorsque le token est expiré ou si c'est la première connexion.
 function redirectToSpotifyAuth() {
     const authUrl = `https://accounts.spotify.com/authorize?response_type=token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scopes}`;
     window.location.href = authUrl;
-}
+}  
 
 
 
