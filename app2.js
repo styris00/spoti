@@ -1119,6 +1119,7 @@ function getValidAccessToken() {
     const expiresAt = parseInt(localStorage.getItem('spotify_token_expires_at'), 10); // l’expiration
 
     if (!token || Date.now() > expiresAt - 300000) { // si le token est absent ou expire bientôt (dans 5min)
+        console.log("NOUVEAU TOCKEN NECESSAIRE (getValidAccessToken())")
         if (refreshToken) {
             // Si le refresh token existe, on l'utilise pour obtenir un nouveau access token
             return refreshAccessToken(refreshToken);
@@ -1209,8 +1210,8 @@ launchBeginningActions()
 
 
 // Récupérer et afficher les playlists de l'utilisateur
-function fetchPlaylists() {
-    accessToken = getValidAccessToken()
+async function fetchPlaylists() {
+    accessToken = await getValidAccessToken()
     fetch('https://api.spotify.com/v1/me/playlists', {
         headers: { 'Authorization': `Bearer ${accessToken}` }
     })
@@ -1240,11 +1241,11 @@ document.getElementById('import-musics').addEventListener('click', async event =
 });
 
 // Récupérer les musiques d'une playlist Spotify
-async  function fetchTracksFromPlaylist(playlistId) {
+async function fetchTracksFromPlaylist(playlistId) {
 
     let tracks = []; // Tableau pour stocker tous les morceaux
     let nextUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`; // URL de base pour récupérer les morceaux
-    accessToken = getValidAccessToken()
+    accessToken = await getValidAccessToken()
 
     try {
         while (nextUrl) {
@@ -1297,7 +1298,7 @@ async  function fetchTracksFromPlaylist(playlistId) {
 // Récupérer les musiques d'un album Spotify
 async function fetchTracksFromAlbum(albumId) {
     try {
-        accessToken = getValidAccessToken()
+        accessToken = await getValidAccessToken()
 
         // Étape 1 : Récupérer les musiques de l'album
         const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
@@ -1360,8 +1361,8 @@ async function fetchTracksFromAlbum(albumId) {
 }
 
 // Récupérer les musiques d'un album Spotify rapidement (une seule requete "Album" mais incomplet pour les musiques -> NE PAS UTILISER POUR COMPLETER LA BASE DE DONNEES DE L'APP !!, juste pour compter)
-function fetchTracksFromAlbumFAST(albumId) {
-    accessToken = getValidAccessToken()
+async function fetchTracksFromAlbumFAST(albumId) {
+    accessToken = await getValidAccessToken()
 
     return fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
         headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -1384,7 +1385,7 @@ function fetchTracksFromAlbumFAST(albumId) {
 // Récupérer un artiste Spotify
 async function fetchArtist(artistID) {
     try {
-        accessToken = getValidAccessToken()
+        accessToken = await getValidAccessToken()
 
         const response = await fetch(`https://api.spotify.com/v1/artists/${getOneArtist(artistID)}`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -1412,7 +1413,7 @@ async function fetchArtist(artistID) {
 // Récupérer un album Spotify
 async function fetchAlbum(albumID) {
     try {
-        accessToken = getValidAccessToken()
+        accessToken = await getValidAccessToken()
 
         const response = await fetch(`https://api.spotify.com/v1/albums/${albumID}`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -1447,7 +1448,7 @@ async function updatePopularityInIndexedDB() {
     const albumStore = transaction.objectStore('albums');
     const artistStore = transaction.objectStore('artists');
 
-    accessToken = getValidAccessToken()
+    accessToken = await getValidAccessToken()
 
     // Mettre à jour les musiques
     musicStore.openCursor().onsuccess = async event => {
@@ -1509,8 +1510,8 @@ async function updatePopularityInIndexedDB() {
 }
 
 // Créer une playlist Spotify avec certaines musiques
-function createNewPlaylist(name, tracks) {
-    accessToken = getValidAccessToken()
+async function createNewPlaylist(name, tracks) {
+    accessToken = await getValidAccessToken()
 
     // Récupérer les informations de l'utilisateur
     fetch('https://api.spotify.com/v1/me', {
@@ -1543,13 +1544,13 @@ function createNewPlaylist(name, tracks) {
 }
 
 // Ajouter une musique dans une playlist Spotify
-function addTracksToPlaylist(playlistId, tracks) {
+async function addTracksToPlaylist(playlistId, tracks) {
     const uris = tracks.map(track => track.uri);
 
     const maxTracksPerRequest = 90; // Limite de 90 morceaux par requête
     let startIndex = 0;
 
-    accessToken = getValidAccessToken()
+    accessToken = await getValidAccessToken()
 
     while (startIndex < uris.length){
         const endIndex = Math.min(startIndex + maxTracksPerRequest, uris.length);
