@@ -1205,7 +1205,12 @@ function launchBeginningActions(){
 
 
 // Lance l'initialisation (les actions à faire dès le démarrage de l'applictaion)
-launchBeginningActions()
+// launchBeginningActions()
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Lance l'initialisation (les actions à faire dès le démarrage de l'applictaion), mais uniquement quand la pages est bien chargée
+    launchBeginningActions()
+});
 
 
 
