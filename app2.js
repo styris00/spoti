@@ -1113,6 +1113,7 @@ function parseTokenFromUrl() {
 // Fonction appellée avant chaque utilisation de l'API Spotify pour garantir d'avoir un tocken correct
 // Si le access_token est expiré ou manquant, cette fonction essaie de récupérer un nouveau token via le refresh_token. Si le refresh_token est également absent, elle lance le processus d’authentification normal.
 function getValidAccessToken() {
+    console.log('getValidAccessToken APPELLEEEEEEEEEEEEE');
     const token = localStorage.getItem('spotify_access_token'); // récupère le token stocké
     const refreshToken = localStorage.getItem('spotify_refresh_token'); // récupère le refresh token
     const expiresAt = parseInt(localStorage.getItem('spotify_token_expires_at'), 10); // l’expiration
