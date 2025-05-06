@@ -1091,6 +1091,7 @@ const scopes = [
 // Fonction à lancer au démarrage de l'application (n'a aucun effet, sauf si on arrive depuis la connexion Spotify (après s'être connecté) -> Dasn ce cas, cela stocke les tockens proprement)
 // Si le access_token, le refresh_token et expires_in sont présents dans l'URL (ce qui arrive après une connexion réussie), on les stocke dans localStorage pour les réutiliser plus tard.
 function parseTokenFromUrl() {
+    console.log('parseTokenFromUrl APPELLEEEEEEEEEEEEE');
     const hash = window.location.hash.substring(1); // récupère le hash de l'URL après #
     const params = new URLSearchParams(hash);       // le transforme en objet manipulable
 
