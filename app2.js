@@ -1070,7 +1070,7 @@ async function doesMusicCorrespondToCurrentFilters(music, criteria){
 // ==============================================
 // Intégration avec Spotify API
 // ==============================================
-let accessToken;
+//let accessToken;
 
 // Loging into Spotify
 const clientId = '90fc7089b14747f58ec11b9607ee63ac'; // Remplacez par votre Client ID
@@ -1083,30 +1083,133 @@ const scopes = [
     'user-read-playback-state', // Supplementaire (POUR LA LECTURE mais nécessite compte prémium (exemple : test7.html))
     'user-modify-playback-state', // Supplementaire (POUR LA LECTURE mais nécessite compte prémium (exemple : test7.html))
     'streaming', // Supplementaire (POUR LA LECTURE mais nécessite compte prémium (exemple : test7.html))
+    'playlist-read-private', // JSP, vient de ChatGPT donc je le met au cas où
+    'user-read-email' // JSP, vient de ChatGPT donc je le met au cas où
 ].join('%20');
 
-// Connexion à l'interface : Loging into Spotify
-document.getElementById('spotify-login').addEventListener('click', () => {
+
+// Fonction à lancer au démarrage de l'application (n'a aucun effet, sauf si on arrive depuis la connexion Spotify (après s'être connecté) -> Dasn ce cas, cela stocke les tockens proprement)
+// Si le access_token, le refresh_token et expires_in sont présents dans l'URL (ce qui arrive après une connexion réussie), on les stocke dans localStorage pour les réutiliser plus tard.
+function parseTokenFromUrl() {
+    const hash = window.location.hash.substring(1); // récupère le hash de l'URL après #
+    const params = new URLSearchParams(hash);       // le transforme en objet manipulable
+
+    const token = params.get('access_token');       // extrait le token
+    const refreshToken = params.get('refresh_token'); // extrait le refresh token
+    const expiresIn = parseInt(params.get('expires_in'), 10); // extrait la durée de validité
+
+    if (token && refreshToken && expiresIn) {
+        const expirationTime = Date.now() + expiresIn * 1000; // calcule la date d'expiration
+
+        localStorage.setItem('spotify_access_token', token); // stocke le token
+        localStorage.setItem('spotify_refresh_token', refreshToken); // stocke le refresh token
+        localStorage.setItem('spotify_token_expires_at', expirationTime); // stocke l'expiration
+
+        window.location.hash = ''; // nettoie l'URL (bonne UX, évite que le token reste visible)
+    }
+}
+
+
+// Fonction appellée avant chaque utilisation de l'API Spotify pour garantir d'avoir un tocken correct
+// Si le access_token est expiré ou manquant, cette fonction essaie de récupérer un nouveau token via le refresh_token. Si le refresh_token est également absent, elle lance le processus d’authentification normal.
+function getValidAccessToken() {
+    const token = localStorage.getItem('spotify_access_token'); // récupère le token stocké
+    const refreshToken = localStorage.getItem('spotify_refresh_token'); // récupère le refresh token
+    const expiresAt = parseInt(localStorage.getItem('spotify_token_expires_at'), 10); // l’expiration
+
+    if (!token || Date.now() > expiresAt - 300000) { // si le token est absent ou expire bientôt (dans 5min)
+        if (refreshToken) {
+            // Si le refresh token existe, on l'utilise pour obtenir un nouveau access token
+            return refreshAccessToken(refreshToken);
+        }
+        redirectToSpotifyAuth(); // relance le flow d'auth si on n'a ni token valide, ni refresh token
+        return null;
+    }
+
+    return token; // sinon, le token est encore bon
+}
+
+
+// Utilisée par "getValidAccessToken()" dans le cas où un simple "rafraichissement de token est possible"
+// La fonction refreshAccessToken() envoie une requête à l'API Spotify avec le refresh_token pour obtenir un nouveau access_token. Si la réponse est positive, elle stocke le nouveau token dans localStorage.
+function refreshAccessToken(refreshToken) {
+
+    const url = `https://accounts.spotify.com/api/token`;
+    const params = new URLSearchParams();
+    params.append('grant_type', 'refresh_token');
+    params.append('refresh_token', refreshToken);
+    params.append('client_id', clientId);
+    params.append('redirect_uri', redirectUri);
+
+    fetch(url, {
+        method: 'POST',
+        body: params,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.access_token) {
+                const expirationTime = Date.now() + data.expires_in * 1000;
+                localStorage.setItem('spotify_access_token', data.access_token);
+                localStorage.setItem('spotify_token_expires_at', expirationTime);
+                console.log('Nouveau token récupéré :', data.access_token);
+            }
+        })
+        .catch(error => console.error('Erreur lors du rafraîchissement du token :', error));
+}
+
+// Utilisée par "getValidAccessToken()" dans le cas où il faut refaire une authentification complète
+// Cette fonction génère l’URL d’authentification pour obtenir un nouveau access_token lorsque nécessaire. Cela se produit lorsque le token est expiré ou si c'est la première connexion.
+function redirectToSpotifyAuth() {
     const authUrl = `https://accounts.spotify.com/authorize?response_type=token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scopes}`;
     window.location.href = authUrl;
-});
+}
+
+
+
+
+// Connexion à l'interface : Loging into Spotify
+// document.getElementById('spotify-login').addEventListener('click', () => {
+//     const authUrl = `https://accounts.spotify.com/authorize?response_type=token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scopes}`;
+//     window.location.href = authUrl;
+// });
 
 // GERER L'ACTUALISATION REGULIERE ??
 // Gérer le token d'accès depuis l'URL
-document.addEventListener('DOMContentLoaded', () => {
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
-    accessToken = params.get('access_token');
+// document.addEventListener('DOMContentLoaded', () => {
+//     const hash = window.location.hash.substring(1);
+//     const params = new URLSearchParams(hash);
+//     accessToken = params.get('access_token');
 
-    if (accessToken) {
-        fetchPlaylists(accessToken);
-    } else {
-        console.error('Aucun accessToken trouvé.');
-    }
-});
+//     if (accessToken) {
+//         fetchPlaylists(accessToken);
+//     } else {
+//         console.error('Aucun accessToken trouvé.');
+//     }
+// });
+
+
+// Fonction à lancer dès le démarrage de l'application pour faire les actions nécessaires dè le démarrage
+function launchBeginningActions(){
+    // Si on vient de se connecter avec Spotify, on stocke correctement les tokens
+    parseTokenFromUrl()
+
+    // Faire apparaitre les playlistes Spotify dans la liste de sélection des playlists (PAGE IMPORTER)
+    fetchPlaylists();
+}
+
+
+
+// Lance l'initialisation (les actions à faire dès le démarrage de l'applictaion)
+launchBeginningActions()
+
+
 
 // Récupérer et afficher les playlists de l'utilisateur
-function fetchPlaylists(accessToken) {
+function fetchPlaylists() {
+    accessToken = getValidAccessToken()
     fetch('https://api.spotify.com/v1/me/playlists', {
         headers: { 'Authorization': `Bearer ${accessToken}` }
     })
@@ -1122,6 +1225,7 @@ function fetchPlaylists(accessToken) {
             }); // Peut-etre un "catch" là qui permettrait de se reconnecter à spotify si besoin ???
         });
 }
+
 
 // Connexion à l'interface : Récupérer les musiques d'une playlist Spotify
 document.getElementById('import-musics').addEventListener('click', async event => {
@@ -1139,6 +1243,7 @@ async  function fetchTracksFromPlaylist(playlistId) {
 
     let tracks = []; // Tableau pour stocker tous les morceaux
     let nextUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`; // URL de base pour récupérer les morceaux
+    accessToken = getValidAccessToken()
 
     try {
         while (nextUrl) {
@@ -1191,6 +1296,8 @@ async  function fetchTracksFromPlaylist(playlistId) {
 // Récupérer les musiques d'un album Spotify
 async function fetchTracksFromAlbum(albumId) {
     try {
+        accessToken = getValidAccessToken()
+
         // Étape 1 : Récupérer les musiques de l'album
         const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -1253,6 +1360,8 @@ async function fetchTracksFromAlbum(albumId) {
 
 // Récupérer les musiques d'un album Spotify rapidement (une seule requete "Album" mais incomplet pour les musiques -> NE PAS UTILISER POUR COMPLETER LA BASE DE DONNEES DE L'APP !!, juste pour compter)
 function fetchTracksFromAlbumFAST(albumId) {
+    accessToken = getValidAccessToken()
+
     return fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
         headers: { 'Authorization': `Bearer ${accessToken}` }
     })
@@ -1274,6 +1383,8 @@ function fetchTracksFromAlbumFAST(albumId) {
 // Récupérer un artiste Spotify
 async function fetchArtist(artistID) {
     try {
+        accessToken = getValidAccessToken()
+
         const response = await fetch(`https://api.spotify.com/v1/artists/${getOneArtist(artistID)}`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
         });
@@ -1300,6 +1411,8 @@ async function fetchArtist(artistID) {
 // Récupérer un album Spotify
 async function fetchAlbum(albumID) {
     try {
+        accessToken = getValidAccessToken()
+
         const response = await fetch(`https://api.spotify.com/v1/albums/${albumID}`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
         });
@@ -1332,6 +1445,8 @@ async function updatePopularityInIndexedDB() {
     const musicStore = transaction.objectStore('musics');
     const albumStore = transaction.objectStore('albums');
     const artistStore = transaction.objectStore('artists');
+
+    accessToken = getValidAccessToken()
 
     // Mettre à jour les musiques
     musicStore.openCursor().onsuccess = async event => {
@@ -1394,6 +1509,8 @@ async function updatePopularityInIndexedDB() {
 
 // Créer une playlist Spotify avec certaines musiques
 function createNewPlaylist(name, tracks) {
+    accessToken = getValidAccessToken()
+
     // Récupérer les informations de l'utilisateur
     fetch('https://api.spotify.com/v1/me', {
         headers: {
@@ -1430,6 +1547,8 @@ function addTracksToPlaylist(playlistId, tracks) {
 
     const maxTracksPerRequest = 90; // Limite de 90 morceaux par requête
     let startIndex = 0;
+
+    accessToken = getValidAccessToken()
 
     while (startIndex < uris.length){
         const endIndex = Math.min(startIndex + maxTracksPerRequest, uris.length);
