@@ -6,14 +6,6 @@ if ('serviceWorker' in navigator) {
 }
 
 
-// Enlève la div noir qui sert au bon fonctionnement du splash screen, dès que l'app est bien chargée.
-window.addEventListener("load", () => {
-  const splash = document.getElementById("splash-fake");
-  if (splash) splash.remove();
-});
-
-
-
 // ==============================================
 // Navigation entre les sections de l'application
 // ==============================================
