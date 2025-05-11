@@ -1125,7 +1125,7 @@ function parseTokenFromUrl() {
       const expirationTime = Date.now() + parseInt(expiresIn, 10) * 1000;
       localStorage.setItem('spotify_access_token', token);
       localStorage.setItem('spotify_token_expires_at', expirationTime);
-      window.history.replaceState({}, document.title, "/"); // nettoie l'URL
+      window.history.replaceState({}, document.title, "/spoti/"); // nettoie l'URL
     }
 }
 
