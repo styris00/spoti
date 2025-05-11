@@ -1070,12 +1070,14 @@ async function doesMusicCorrespondToCurrentFilters(music, criteria){
                 criteria.maxJoyeuse == 4 && criteria.minMusicale == 0 && criteria.maxMusicale == 4)
 
         const customFieldMatches =
-            (criteria.minEnergique == null || music.customFields.energique >= criteria.minEnergique) &&
-            (criteria.maxEnergique == null || music.customFields.energique <= criteria.maxEnergique) &&
-            (criteria.minJoyeuse == null || music.customFields.joyeuse >= criteria.minJoyeuse) &&
-            (criteria.maxJoyeuse == null || music.customFields.joyeuse <= criteria.maxJoyeuse) &&
-            (criteria.minMusicale == null || music.customFields.musicale >= criteria.minMusicale) &&
-            (criteria.maxMusicale == null || music.customFields.musicale <= criteria.maxMusicale);
+            // On compare le maximum de la musique avec le minimum du ctitère et le minimum de la musique avec le maximum du critère
+            // (le premier et le dernier de la musique sont souvent le même nombre)
+            (criteria.minEnergique == null || music.customFields.energique.slice(-1) >= criteria.minEnergique) &&
+            (criteria.maxEnergique == null || music.customFields.energique[0] <= criteria.maxEnergique) &&
+            (criteria.minJoyeuse == null || music.customFields.joyeuse.slice(-1) >= criteria.minJoyeuse) &&
+            (criteria.maxJoyeuse == null || music.customFields.joyeuse[0] <= criteria.maxJoyeuse) &&
+            (criteria.minMusicale == null || music.customFields.musicale.slice(-1) >= criteria.minMusicale) &&
+            (criteria.maxMusicale == null || music.customFields.musicale[0] <= criteria.maxMusicale);
 
         const matchesCriteria = (titleMatches && albumMatches && authorMatches && heartMatches) && (customFieldsNotUsed || customFieldMatches);
         
@@ -1768,7 +1770,7 @@ async function showActionMenu(music) {
                     <select id="select-${arr1[i].toLowerCase()}" data-id="${music.id}">
         `;
                 
-        let arr2 = [0, 1, 2, 3, 4];
+        let arr2 = ["0", "1", "1-2", "2", "1-3", "2-3", "3", "4"];
         let selected = 0;
         if (scores[i] != -1){
             selected = scores[i];
