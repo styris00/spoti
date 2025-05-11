@@ -762,7 +762,7 @@ function displayMusicsToRate() {
                 if (scores[i] == -1){
                     textHTML = textHTML + `<option value="0" selected>-</option>`;
                 };
-                let arr2 = [0, 1, 2, 3, 4];
+                let arr2 = ["0", "1", "1-2", "2", "1-3", "2-3", "3", "4"];
                 let selected = scores[i]; // -1 si pas encore évalué
                 for (let j of arr2) {
                     if (j == selected){
