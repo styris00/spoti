@@ -1,10 +1,11 @@
 // ===============================
-//  auth.js — Gestion OAuth 2.0 + PKCE
+//  auth.js — OAuth 2.0 PKCE (Version stable GitHub Pages)
 // ===============================
 
-// ---- Configuration Spotify ----
-const CLIENT_ID = "90fc7089b14747f58ec11b9607ee63ac";   // Ton Client ID
-const REDIRECT_URI = "https://styris00.github.io/spoti/"; // Ton redirect URI
+// Doit être EXACTEMENT identique à celui du Dashboard Spotify
+const CLIENT_ID = "90fc7089b14747f58ec11b9607ee63ac";
+const REDIRECT_URI = "https://styris00.github.io/spoti/";   // SLASH FINAL OBLIGATOIRE !!!
+
 const SCOPES = [
     "playlist-read-private",
     "playlist-read-collaborative",
@@ -18,27 +19,26 @@ const SCOPES = [
 
 
 // ============================================================
-//               GÉNÉRATION PKCE (verifier + challenge)
+// PKCE utils
 // ============================================================
 
-function generateRandomString(length = 128) {
+function generateRandomString(length = 64) {
     const array = new Uint8Array(length);
     crypto.getRandomValues(array);
-    return Array.from(array, byte => byte.toString(16).padStart(2, "0")).join("");
+    return [...array].map(v => v.toString(16).padStart(2, "0")).join("");
 }
 
-async function sha256(buffer) {
-    const data = new TextEncoder().encode(buffer);
+async function sha256(text) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
     const hash = await crypto.subtle.digest("SHA-256", data);
-    return btoa(String.fromCharCode(...new Uint8Array(hash)))
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=+$/, "");
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(hash)));
+    return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 
 // ============================================================
-//            Lancer l’authentification Spotify
+// Lancer l’authentification
 // ============================================================
 
 export async function startAuth() {
@@ -47,30 +47,30 @@ export async function startAuth() {
 
     const codeChallenge = await sha256(codeVerifier);
 
-    const authUrl =
-        "https://accounts.spotify.com/authorize?" +
-        new URLSearchParams({
-            client_id: CLIENT_ID,
-            response_type: "code",
-            redirect_uri: REDIRECT_URI,
-            scope: SCOPES,
-            code_challenge_method: "S256",
-            code_challenge: codeChallenge
-        });
+    const params = new URLSearchParams({
+        client_id: CLIENT_ID,
+        response_type: "code",
+        redirect_uri: REDIRECT_URI,
+        scope: SCOPES,
+        code_challenge_method: "S256",
+        code_challenge: codeChallenge
+    });
 
-    window.location.href = authUrl;
+    window.location.href =
+        "https://accounts.spotify.com/authorize?" + params.toString();
 }
 
 
 // ============================================================
-//      Traitement du CALLBACK (Spotify → ton application)
+// Traiter le retour Spotify (?code=…)
 // ============================================================
 
 export async function handleAuthCallback() {
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
 
-    if (!code) return false; // Aucun code dans l’URL → pas un callback Spotify
+    // Pas un retour OAuth
+    if (!code) return false;
 
     const codeVerifier = localStorage.getItem("pkce_code_verifier");
 
@@ -91,29 +91,36 @@ export async function handleAuthCallback() {
     const data = await response.json();
 
     if (data.error) {
-        console.error("Erreur auth Spotify :", data);
+        console.error("Spotify OAuth error:", data);
         return false;
     }
 
     storeTokens(data);
 
-    // Nettoie l’URL
+    // Nettoie l’URL (GitHub Pages-friendly)
     history.replaceState({}, "", REDIRECT_URI);
 
+    console.log("OAuth OK ✓");
     return true;
 }
 
 
 // ============================================================
-//                Stockage & manipulation des tokens
+// Stockage des tokens
 // ============================================================
 
 function storeTokens(data) {
     localStorage.setItem("spotify_access_token", data.access_token);
-    localStorage.setItem("spotify_refresh_token", data.refresh_token || localStorage.getItem("spotify_refresh_token"));
-    localStorage.setItem("spotify_token_expire_at", String(Date.now() + data.expires_in * 1000));
-}
 
+    if (data.refresh_token) {
+        localStorage.setItem("spotify_refresh_token", data.refresh_token);
+    }
+
+    localStorage.setItem(
+        "spotify_token_expire_at",
+        Date.now() + data.expires_in * 1000
+    );
+}
 
 export function getStoredToken() {
     return localStorage.getItem("spotify_access_token");
@@ -121,13 +128,14 @@ export function getStoredToken() {
 
 
 // ============================================================
-//                        REFRESH TOKEN
+// Refresh token
 // ============================================================
 
 async function refreshAccessToken() {
     const refreshToken = localStorage.getItem("spotify_refresh_token");
+
     if (!refreshToken) {
-        console.warn("Aucun refresh_token → redirection login Spotify");
+        console.warn("Pas de refresh token → nouvelle auth");
         return startAuth();
     }
 
@@ -146,7 +154,7 @@ async function refreshAccessToken() {
     const data = await response.json();
 
     if (data.error) {
-        console.error("Impossible de refresh le token", data);
+        console.warn("Impossible de refresh le token:", data);
         return startAuth();
     }
 
@@ -156,16 +164,20 @@ async function refreshAccessToken() {
 
 
 // ============================================================
-//           Obtenir un access token valide automatiquement
+// Obtenir automatiquement un access_token valide
 // ============================================================
 
 export async function getValidAccessToken() {
     const token = localStorage.getItem("spotify_access_token");
-    const expiresAt = parseInt(localStorage.getItem("spotify_token_expire_at"), 10);
+    const expiresAt = parseInt(
+        localStorage.getItem("spotify_token_expire_at") || "0",
+        10
+    );
 
-    if (token && Date.now() < expiresAt - 60 * 1000) {
-        return token; // Token encore valide
+    if (token && Date.now() < expiresAt - 10_000) {
+        return token; // encore valable
     }
 
+    // sinon refresh
     return await refreshAccessToken();
 }

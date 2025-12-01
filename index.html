@@ -359,6 +359,11 @@
         </section>
     </main>
 
-    <script src="app2.js"></script>
+    <script type="module">
+        import { bootstrapApp } from "./js/ui.js";
+        window.addEventListener("DOMContentLoaded", bootstrapApp);
+    </script>
+
+
 </body>
 </html>
